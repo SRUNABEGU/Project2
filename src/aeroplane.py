@@ -1,5 +1,8 @@
 class Aeroplane:
-    def __init__(self, callsign, origin_country, velocity, geo_altitude):
+    """Класс, представляющий воздушное судно."""
+
+    def __init__(self, icao24, callsign, origin_country, velocity, geo_altitude):
+        self.icao24 = icao24.strip() if icao24 else "Unknown"
         self.callsign = callsign.strip() if callsign else "Unknown"
         self.origin_country = origin_country
         self.__velocity = self._validate_positive(velocity)
@@ -33,5 +36,6 @@ class Aeroplane:
         """Преобразует сырые данные из API в список объектов Aeroplane."""
         objects = []
         for item in raw_data:
-            objects.append(cls(item[1], item[2], item[9], item[7]))
+            # item[0] - это icao24, item[1] - callsign, item[9] - velocity, item[7] - geo_altitude
+            objects.append(cls(item[0], item[1], item[2], item[9], item[7]))
         return objects

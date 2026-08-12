@@ -41,8 +41,16 @@ class AircraftAPI(BaseAPI):
             'lomax': bounds[3]
         }
 
-        response = requests.get(self.opensky_url, params=params)
-        if response.status_code == 200:
-            states = response.json().get('states')
-            return states if states else []
+        try:
+            # Добавляем timeout=10 секунд, чтобы скрипт не висел вечно
+            response = requests.get(self.opensky_url, params=params, timeout=10)
+            if response.status_code == 200:
+                states = response.json().get('states')
+                return states if states else []
+            else:
+                print(f"[Предупреждение] OpenSky вернул код {response.status_code} для {country_name}")
+        except requests.exceptions.RequestException:
+            # Если сервер лег или таймаут — не падаем, а вежливо пропускаем
+            print(f"[Ошибка сети] OpenSky не ответил вовремя для {country_name}. Пропускаем...")
+
         return []
